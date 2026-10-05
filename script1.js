@@ -1,275 +1,466 @@
-// Variable and data structure ✅
-// loaddata and localstorage    ✅
-// updateGreeting   ✅
-// savedata function  ✅
-// renderTasks function (needs to be furthur division)
-// toggletasks function
-// deleteTasks function
-// modal functions
-// Form Submission
-// Edit task function
-// control flow for better understanding how everything is working
+// ============================================================
+// TODO LIST APPLICATION
+// ============================================================
+
+// Variables
+let tasks = [];
+let editingId = null;
+
+const STORAGE_KEY = "AkshLabs3";
 
 
-// ----------------------------------- STARTING -------------------------------------------------
+// ============================================================
+// LOAD DATA
+// ============================================================
 
-// Variable defination and ID Allocation
+function loadData() {
+    const saved = localStorage.getItem(STORAGE_KEY);
 
- let tasks = [],
+    if (saved) {
+        try {
+            tasks = JSON.parse(saved);
 
- // EDITING ID / DYNAMIC ID
-        editingId = null;
-
-// Load data and localStorage
-
-function loadData(){
-    const saved = localStorage.getItem("AkshLabs3");
-    if(saved){
-        tasks = JSON.parse(saved);
+            if (!Array.isArray(tasks)) {
+                tasks = [];
+            }
+        } catch (error) {
+            console.error("Error loading tasks:", error);
+            tasks = [];
+        }
     } else {
         tasks = [
-
             {
-                id:1,
+                id: 1,
                 title: "Do workout for 20 minutes",
                 status: "pending",
                 priority: "normal",
-                completed: false,
+                completed: false
             },
-
             {
                 id: 2,
                 title: "Learn one concept of JavaScript",
                 status: "pending",
                 priority: "normal",
-                completed: false,
+                completed: false
             },
-
             {
-                id:3,
+                id: 3,
                 title: "Prepare for tomorrow class test",
                 status: "pending",
                 priority: "critical",
-                completed: false,
+                completed: false
             },
-
             {
-                id:4,
-                title: "Delete all unneccessary files and videos from the computer",
+                id: 4,
+                title: "Delete all unnecessary files and videos from the computer",
                 status: "pending",
                 priority: "minor",
-                completed: false,
-            },
-            //End of Array [Tasks]
+                completed: false
+            }
         ];
-        // End of Else statement
+
+        saveData();
     }
-    // End of function LOAD_DATA()
+
     renderTasks();
     updateGreeting();
 }
 
 
-// ---------------------------- Update Greeting Function ------------------------
+// ============================================================
+// UPDATE GREETING
+// ============================================================
 
-function updateGreeting(){
+function updateGreeting() {
     const hour = new Date().getHours();
+
     let greet = "Good Morning";
 
-    // Condition Checking for Real Time Changes
-
-    if(hour >= 12 && hour < 18){
+    if (hour >= 12 && hour < 18) {
         greet = "Good Afternoon";
-    } else if(hour>=18){
+    } else if (hour >= 18) {
         greet = "Good Evening";
     }
 
-    // Changing InnerHTMl
-
-    document.getElementById("greeting").textContent = `${greet}, Akshat`
+    document.getElementById("greeting").textContent =
+        `${greet}, Akshat`;
 }
 
 
-// ---------------------------------- SAVE_DATA() FUNCTION -----------------------------------
+// ============================================================
+// SAVE DATA
+// ============================================================
 
-function saveData(){
-    localStorage.setItem("AkshLabs2", JSON.stringify(tasks));
+function saveData() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
 }
 
 
-// -------------------------------------- RENDER TASKS FUNCTION ----------------------------------
+// ============================================================
+// RENDER TASKS
+// ============================================================
 
 function renderTasks() {
-    const onHold = tasks.filter((t) => !t.completed);
-    const completed = tasks.filter((t) => t.completed);
 
-    // ---------------------- TO RENDER ONHOLD TASKS ---------------------------
+    const onHold = tasks.filter((task) => !task.completed);
+    const completed = tasks.filter((task) => task.completed);
 
-        document.getElementById("onHoldTasks").innerHTML = onHold.length
-            ? onHold.map((t) =>
-                `<div class="task-item">
-                <div class="task-checkbox ${t.completed ? "completed" : ""}" onclick="toggleTask(${t.id})"></div>
-                <div class="task-content">
-                <div class="task-title ${t.completed ? "completed": ""}">
-                ${t.title}
+
+    // --------------------------------------------------------
+    // ON HOLD TASKS
+    // --------------------------------------------------------
+
+    document.getElementById("onHoldTasks").innerHTML =
+        onHold.length
+            ? onHold.map((task) => `
+                <div class="task-item">
+
+                    <div
+                        class="task-checkbox"
+                        onclick="toggleTask(${task.id})"
+                    ></div>
+
+                    <div class="task-content">
+                        <div class="task-title">
+                            ${escapeHTML(task.title)}
+                        </div>
+                    </div>
+
+                    <span class="status-badge status-${task.status}">
+                        ${
+                            task.status === "progress"
+                                ? "In Progress"
+                                : task.status.charAt(0).toUpperCase()
+                                  + task.status.slice(1)
+                        }
+                    </span>
+
+                    <div class="priority-badge priority-${task.priority}">
+                        <i class="fas fa-circle"></i>
+                        ${
+                            task.priority.charAt(0).toUpperCase()
+                            + task.priority.slice(1)
+                        }
+                    </div>
+
+                    <div class="avatar">CF</div>
+
+                    <button
+                        class="icon-button"
+                        style="width:30px;height:30px;"
+                        onclick="editTask(${task.id})"
+                        title="Edit Task"
+                    >
+                        <i
+                            class="fas fa-pen"
+                            style="font-size:12px;"
+                        ></i>
+                    </button>
+
+                    <button
+                        class="icon-button"
+                        style="width:30px;height:30px;"
+                        onclick="deleteTask(${task.id})"
+                        title="Delete Task"
+                    >
+                        <i
+                            class="fas fa-trash"
+                            style="font-size:12px;"
+                        ></i>
+                    </button>
+
                 </div>
-            </div>
-
-            <span class="status-badge status-${t.status}">
-            ${t.status === "progress" ? "In Progress" : t.status.charAt(0).toUpperCase() + t.status.slice(1)}
-            </span>
-
-            <div class="priority-badge priority-${t.priority}">
-                <i class="fas fa-circle"></i>
-                ${t.priority.charAt(0).toUpperCase() + t.priority.slice(1)}
-            </div>
-
-            <div class="avatar"> CF </div>
-
-            <button class="icon-button" style="width: 30px; height: 30px;" onclick="editTask(${t.id})">
-
-            <i class="fas fa-pen" style="font-size:12px;"> </i>
-
-            </button>
-
-            <button class="icon-button" style="width: 30px; height: 30px;" onclick="deleteTask(${t.id})">
-
-            <i class="fas fa-trash" style="font-size:12px;"> </i>
-
-            </button>
-
-        </div>`
-            )
-            .join(" ")
-            : '<p style="color:#9ca3af; padding:20px;">No Tasks on Hold</p>';
+            `).join("")
+            : `
+                <p style="color:#9ca3af;padding:20px;">
+                    No Tasks on Hold
+                </p>
+            `;
 
 
-// ------------------To Render Completed Tasks---------------------------
+    // --------------------------------------------------------
+    // COMPLETED TASKS
+    // --------------------------------------------------------
 
-        document.getElementById("completedTasks").innerHTML = completed.length
-            ? completed.map((t) =>
-                `<div class="task-item">
-                <div class="task-checkbox completed" onclick="toggleTask(${t.id})"></div>
-                <div class="task-content">
-                    <div class="task-title completed">${t.title}</div>
+    document.getElementById("completedTasks").innerHTML =
+        completed.length
+            ? completed.map((task) => `
+                <div class="task-item">
+
+                    <div
+                        class="task-checkbox completed"
+                        onclick="toggleTask(${task.id})"
+                    ></div>
+
+                    <div class="task-content">
+                        <div class="task-title completed">
+                            ${escapeHTML(task.title)}
+                        </div>
+                    </div>
+
+                    <span class="status-badge status-completed">
+                        Completed
+                    </span>
+
+                    <div class="priority-badge priority-${task.priority}">
+                        <i class="fas fa-circle"></i>
+                        ${
+                            task.priority.charAt(0).toUpperCase()
+                            + task.priority.slice(1)
+                        }
+                    </div>
+
+                    <div class="avatar">CF</div>
+
+                    <button
+                        class="icon-button"
+                        style="width:30px;height:30px;"
+                        onclick="editTask(${task.id})"
+                        title="Edit Task"
+                    >
+                        <i
+                            class="fas fa-pen"
+                            style="font-size:12px;"
+                        ></i>
+                    </button>
+
+                    <button
+                        class="icon-button"
+                        style="width:30px;height:30px;"
+                        onclick="deleteTask(${task.id})"
+                        title="Delete Task"
+                    >
+                        <i
+                            class="fas fa-trash"
+                            style="font-size:12px;"
+                        ></i>
+                    </button>
+
                 </div>
-                <span class="status-badge status-completed">Completed</span>
-                <div class="priority-badge priority-${t.priority}">
-                    <i class="fas fa-circle"></i> ${t.priority.charAt(0).toUpperCase() + t.priority.slice(1)}
-                </div>
-                <div class="avatar">CF</div>
-                <button class="icon-button" style="width:30px;height:30px;" onclick="editTask(${t.id})">
-                    <i class="fas fa-pen" style="font-size:12px;"></i>
-                </button>
-                <button class="icon-button" style="width:30px;height:30px;" onclick="deleteTask(${t.id})">
-                    <i class="fas fa-trash" style="font-size:12px;"></i>
-                </button>
-            </div>
-                `
-        )
-                .join("")
-            : '<p style="color:#9ca3af;padding:20px;">No completed tasks</p>';
+            `).join("")
+            : `
+                <p style="color:#9ca3af;padding:20px;">
+                    No completed tasks
+                </p>
+            `;
 
 
-            // UPDATE Status Bar
+    // --------------------------------------------------------
+    // UPDATE STATISTICS
+    // --------------------------------------------------------
 
-            const total = tasks.length;
-            const completedCount = tasks.filter((t) => t.completed).length;
-            const pending = total - completedCount;
-            const rate = total ? Math.round((completedCount/total) * 100) : 0;
+    const total = tasks.length;
 
-            document.getElementById("taskCount").textContent = pending;
-            document.getElementById("totalTasks").textContent = total;
-            document.getElementById("completedCount").textContent = completedCount;
-            document.getElementById("pendingCount").textContent = pending;
-            document.getElementById("completionRateValue").textContent = rate + "%";
-            document.getElementById("totalProgress").style.width = rate + "%";
-            document.getElementById("completionProgress").style.width = rate + "%";
+    const completedCount =
+        tasks.filter((task) => task.completed).length;
 
+    const pending = total - completedCount;
+
+    const rate =
+        total > 0
+            ? Math.round((completedCount / total) * 100)
+            : 0;
 
 
-            saveData();
+    // IMPORTANT:
+    // HTML ID is "task-count"
+    document.getElementById("task-count").textContent = pending;
+
+    document.getElementById("totalTasks").textContent = total;
+
+    document.getElementById("completedCount").textContent =
+        completedCount;
+
+    document.getElementById("pendingCount").textContent =
+        pending;
+
+    document.getElementById("completionRateValue").textContent =
+        rate + "%";
+
+    document.getElementById("totalProgress").style.width =
+        rate + "%";
+
+    document.getElementById("completionProgress").style.width =
+        rate + "%";
 }
 
-// Rendering Completed
 
-// Toggle Task
+// ============================================================
+// TOGGLE TASK
+// ============================================================
 
-function toggleTask(id){
-    const t = tasks.find((t) => t.id === id);
+function toggleTask(id) {
 
-    if(t){
-        t.completed = !t.completed;
-        t.status = t.completed ? "completed" : "pending";
+    const task = tasks.find((task) => task.id === id);
+
+    if (task) {
+        task.completed = !task.completed;
+
+        task.status = task.completed
+            ? "completed"
+            : "pending";
+
+        saveData();
         renderTasks();
     }
 }
 
-// --------------------------- TO Delete a task ------------------------------
 
-function deleteTask(id){
-    if(confirm("Are you sure you want to delete this Task?")){
-        tasks = tasks.filter((t) => t.id !== id);
+// ============================================================
+// DELETE TASK
+// ============================================================
+
+function deleteTask(id) {
+
+    if (confirm("Are you sure you want to delete this Task?")) {
+
+        tasks = tasks.filter((task) => task.id !== id);
+
+        saveData();
         renderTasks();
     }
 }
 
 
-// ----------------------------OPEN MODAL-----------------------------------------
+// ============================================================
+// OPEN MODAL
+// ============================================================
 
-function openModal(){
-    document.getElementById("taskModal").classList.add("active");
+function openModal() {
+    document
+        .getElementById("taskModal")
+        .classList.add("active");
 }
 
-function closeModal(){
-    document.getElementById("taskModal").classList.remove("active");
-    document.getElementById("taskForm").reset();
+
+// ============================================================
+// CLOSE MODAL
+// ============================================================
+
+function closeModal() {
+
+    document
+        .getElementById("taskModal")
+        .classList.remove("active");
+
+    document
+        .getElementById("taskForm")
+        .reset();
+
     editingId = null;
 }
 
-document.getElementById("taskForm").addEventListener("submit", (e) => {
-    e.preventDefault();
 
-    const title = document.getElementById("taskTitle").value;
-    const status = document.getElementById("taskStatus").value;
-    const priority = document.getElementById("taskPriority").value;
+// ============================================================
+// FORM SUBMISSION
+// ============================================================
 
-    if(editingId){
-        const t = tasks.find((t) => t.id === editingId);
-        t.title = title;
-        t.status = status;
-        t.priority = priority;
-        t.completed = status === "completed";
-    } else {
-        tasks.push({
-            id: Date.now(),
-            title,
-            status,
-            priority,
-            completed: status === "completed"
-        });
+document
+    .getElementById("taskForm")
+    .addEventListener("submit", function (event) {
 
+        event.preventDefault();
+
+        const title =
+            document.getElementById("taskTitle").value.trim();
+
+        const status =
+            document.getElementById("taskStatus").value;
+
+        const priority =
+            document.getElementById("taskPriority").value;
+
+
+        if (!title) {
+            alert("Please enter a task title.");
+            return;
+        }
+
+
+        // ----------------------------------------------------
+        // EDIT TASK
+        // ----------------------------------------------------
+
+        if (editingId !== null) {
+
+            const task =
+                tasks.find((task) => task.id === editingId);
+
+            if (task) {
+                task.title = title;
+                task.status = status;
+                task.priority = priority;
+                task.completed = status === "completed";
+            }
+        }
+
+
+        // ----------------------------------------------------
+        // ADD NEW TASK
+        // ----------------------------------------------------
+
+        else {
+
+            tasks.push({
+                id: Date.now(),
+                title: title,
+                status: status,
+                priority: priority,
+                completed: status === "completed"
+            });
+        }
+
+
+        saveData();
         renderTasks();
         closeModal();
+    });
+
+
+// ============================================================
+// EDIT TASK
+// ============================================================
+
+function editTask(id) {
+
+    const task =
+        tasks.find((task) => task.id === id);
+
+    if (!task) {
+        return;
     }
-})
 
-// ------------------------------TO EDIT A TASK--------------------------------
-
-
-function editTask(id){
     editingId = id;
-    const t = tasks.find((t) => t.id === id);
 
-    if(t){
-        document.getElementById("taskTitle").value = t.title;
-        document.getElementById("taskStatus").value = t.status;
-        document.getElementById("taskPriority").value = t.priority;
+    document.getElementById("taskTitle").value =
+        task.title;
 
-        openModal();
-    }
+    document.getElementById("taskStatus").value =
+        task.status;
+
+    document.getElementById("taskPriority").value =
+        task.priority;
+
+    openModal();
 }
 
 
-loadData();
+// ============================================================
+// ESCAPE HTML
+// ============================================================
 
+function escapeHTML(text) {
+
+    const div = document.createElement("div");
+
+    div.textContent = text;
+
+    return div.innerHTML;
+}
+
+
+// ============================================================
+// START APPLICATION
+// ============================================================
+
+loadData();
