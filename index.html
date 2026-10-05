@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="style.css">
+    <title>Just do it</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"/>
+</head>
+<body>
+    <div class="container">
+
+        <div class="header">
+
+            <div class="search-bar">
+                <i  class="fas fa-search"></i>
+                <input type="text" placeholder="Search Task">
+            </div>
+
+            <div class="header-icon">
+                <button class="icon-button">
+                <i class="fas fa-bell"></i>
+                <span class="notification-dot"></span>
+                </button>
+                <button class="icon-button"><i class="fas fa-user"></i></button>
+            </div>
+        </div>
+    
+
+                <!-- ----MAIN CONTENT---- -->
+
+    <div class="main-content">
+        <div class="title-section">
+            <div class="greeting" id="greeting"></div>
+            <h1>
+                You've got<span class="task-count" id="task-count"> 0</span>  Task Today
+            </h1>
+            <button class="add-button" onclick="openModal()">
+                <i class="fas fa-plus"></i>
+                Add New 
+            </button>
+        </div>
+
+        <!----------------------------ON HOLD AND COMPLETED SECTION------------------------------------>
+
+        <div class="section">
+                <div class="section-header"><h2>On Hold</h2></div>
+                <div id="onHoldTasks"></div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <h2>Completed</h2>
+                    <span class="badge badge-inactive">Inactive</span>
+                </div>
+                <div id="completedTasks"></div>
+            </div>
+    </div> 
+
+            <!-- -------------------SECTION 2----------------------- -->
+
+            <div class="sidebar">
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Result Summary</h3>
+                    <div class="stat-card">
+                        <div class="stat-label">Completion Rate</div>
+                        <div class="stat-value" id="completionRateValue">0%</div>
+                        <div class="progress-bar">
+                        <div class="progress-fill" id="completionProgress" style="width: 0%;"></div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-label">Total Tasks</div>
+                    <div class="stat-value" id="totalTasks">0</div>
+                    <div class="progress-bar">
+                    <div class="progress-fill" id="totalProgress" style="width: 0%;"></div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Completed</div>
+                    <div class="stat-value" id="completedCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Pending</div>
+                    <div class="stat-value" id="pendingCount">0</div>
+                </div>
+            </div>
+            </div>  
+    </div>
+
+        <!-- -------------------------MODEL---------------------------------------- -->
+
+            <div class="modal" id="taskModal">
+            <div class="modal-content">
+                <h2 class="modal-header">Add / Update Task</h2>
+                <form id="taskForm">
+                    <div class="form-group">
+                        <label>Task Title</label>
+                        <input type="text" id="taskTitle" placeholder="Enter task  title" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="taskStatus">
+                            <option value="pending">Pending</option>
+                            <option value="progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Priority</label>
+                        <select id="taskPriority">
+                            <option value="minor">Minor</option>
+                            <option value="normal">Normal</option>
+                            <option value="critical">Critical</option>
+                        </select>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="button button-secondary" onclick="closeModal()">Cancel</button>
+                        <button type="button" class="button button-primary">Save Task</button>
+                    </div>
+                </form>
+            </div>
+            </div>
+</div>
+
+
+<script src="script1.js"></script>
+</body>
+</html>qeww
