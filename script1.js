@@ -2,7 +2,7 @@ let tasks = [],
         editingId = null;
 
       function loadData() {
-        const saved = localStorage.getItem("AkshLabs");
+        const saved = localStorage.getItem("NirwanLabs");
         if (saved) tasks = JSON.parse(saved);
         else
           tasks = [
@@ -46,11 +46,11 @@ let tasks = [],
         else if (hour >= 18) greet = "Good Evening";
         document.getElementById(
           "greeting"
-        ).textContent = `${greet}, Akshat`;
+        ).textContent = `${greet}, Nirwan`;
       }
 
       function saveData() {
-        localStorage.setItem("AkshLabs", JSON.stringify(tasks));
+        localStorage.setItem("NirwanLabs", JSON.stringify(tasks));
       }
 
       function renderTasks() {
